@@ -1,0 +1,194 @@
+{
+  "run": {
+    "run_id": "35886df8c4294a3dbd7ff08fc32c960e",
+    "request": {
+      "sector": "Agencias de marketing",
+      "location": "Lima, Perú",
+      "max_leads": 5
+    },
+    "status": "completed",
+    "steps": 4,
+    "searches": 5,
+    "rejected_saves": 0,
+    "duplicates": 0,
+    "rejections": [],
+    "trace": [
+      {
+        "step": 1,
+        "thought": "",
+        "calls": [
+          {
+            "tool": "search_web",
+            "input": "{\"query\": \"agencias de marketing Lima Perú contacto\"}",
+            "status": "ok",
+            "detail": "6 resultados: https://creativa360.example/contacto, https://impulsodigital-agencia.example, https://ranking-agencias.example/peru/lima, https://empleos-peru.example/ofertas/community-manager-agencia, https://adtools-saas.example, https://www.instagram.com/growthlab.lima.example"
+          },
+          {
+            "tool": "search_web",
+            "input": "{\"query\": \"marketing digital Lima Perú teléfono\"}",
+            "status": "ok",
+            "detail": "6 resultados: https://impulsodigital-agencia.example, https://ranking-agencias.example/peru/lima, https://creativa360.example/contacto, https://empleos-peru.example/ofertas/community-manager-agencia, https://www.instagram.com/growthlab.lima.example, https://marketingnorte-trujillo.example"
+          },
+          {
+            "tool": "search_web",
+            "input": "{\"query\": \"publicidad Lima Perú contacto\"}",
+            "status": "ok",
+            "detail": "6 resultados: https://creativa360.example/contacto, https://ranking-agencias.example/peru/lima, https://impulsodigital-agencia.example, https://empleos-peru.example/ofertas/community-manager-agencia, https://www.instagram.com/growthlab.lima.example, https://adtools-saas.example"
+          }
+        ]
+      },
+      {
+        "step": 2,
+        "thought": "",
+        "calls": [
+          {
+            "tool": "save_lead",
+            "input": "{\"name\": \"Creativa 360\", \"sector\": \"Marketing\", \"summary\": \"Creativa 360: agencia de branding, diseño y marketing de contenidos en Barranco, Lima.\", \"website\": \"https://creativa360.example\", \"location\": \"Barranco, Lima\", \"contact\": {\"emails\": [\"proyectos@creativa360.example\"], \"phones\": [\"999 555 314\"], \"address\": \"Jr. Unión 215, Barranco\", \"social_profiles\": [\"https://www.linkedin.com/company/creativa360-example\"]}, \"source_urls\": [\"https://creativa360.example/contacto\"], \"fit_score\": 5, \"fit_reason\": \"Coincide claramente en sector y ubicación y tiene al menos un dato de contacto.\"}",
+            "status": "saved",
+            "detail": "lead_id=e4720b7a294e495a"
+          },
+          {
+            "tool": "save_lead",
+            "input": "{\"name\": \"Impulso Digital\", \"sector\": \"Marketing\", \"summary\": \"Impulso Digital es una agencia de marketing digital en San Isidro, Lima: SEO, campañas en Google Ads y Meta Ads, y gestión de redes sociales para pymes.\", \"website\": \"https://impulsodigital-agencia.example\", \"location\": \"San Isidro, Lima\", \"contact\": {\"emails\": [\"hola@impulsodigital-agencia.example\"], \"phones\": [\"+51 1 555 3020\"], \"address\": \"Av. Camino Real 456, San Isidro, Lima\", \"social_profiles\": []}, \"source_urls\": [\"https://impulsodigital-agencia.example\"], \"fit_score\": 5, \"fit_reason\": \"Coincide claramente en sector y ubicación y tiene al menos un dato de contacto.\"}",
+            "status": "saved",
+            "detail": "lead_id=7be5b8b72575a962"
+          },
+          {
+            "tool": "save_lead",
+            "input": "{\"name\": \"GrowthLab Lima\", \"sector\": \"Marketing\", \"summary\": \"GrowthLab Lima. Agencia de marketing de performance y growth para e-commerce en Miraflores, Lima.\", \"website\": null, \"location\": \"Miraflores, Lima\", \"contact\": {\"emails\": [], \"phones\": [\"912 555 600\"], \"address\": null, \"social_profiles\": [\"https://www.instagram.com/growthlab.lima.example\"]}, \"source_urls\": [\"https://www.instagram.com/growthlab.lima.example\"], \"fit_score\": 4, \"fit_reason\": \"Coincide en sector y ubicación; contacto ausente o parcial.\"}",
+            "status": "saved",
+            "detail": "lead_id=4eed8f9819921bd5"
+          }
+        ]
+      },
+      {
+        "step": 3,
+        "thought": "",
+        "calls": [
+          {
+            "tool": "search_web",
+            "input": "{\"query\": \"agencias de publicidad Lima Perú contacto\"}",
+            "status": "ok",
+            "detail": "6 resultados: https://creativa360.example/contacto, https://ranking-agencias.example/peru/lima, https://impulsodigital-agencia.example, https://empleos-peru.example/ofertas/community-manager-agencia, https://adtools-saas.example, https://www.instagram.com/growthlab.lima.example"
+          },
+          {
+            "tool": "search_web",
+            "input": "{\"query\": \"marketing online Lima Perú teléfono\"}",
+            "status": "ok",
+            "detail": "6 resultados: https://impulsodigital-agencia.example, https://creativa360.example/contacto, https://ranking-agencias.example/peru/lima, https://empleos-peru.example/ofertas/community-manager-agencia, https://www.instagram.com/growthlab.lima.example, https://adtools-saas.example"
+          }
+        ]
+      },
+      {
+        "step": 4,
+        "thought": "",
+        "calls": [
+          {
+            "tool": "finish",
+            "input": "{\"summary\": \"Se encontraron 3 leads cualificados en el sector de agencias de marketing en Lima, Perú. Se descartaron otros resultados que eran directorios o no cumplían con los criterios de cualificación.\"}",
+            "status": "ok",
+            "detail": ""
+          }
+        ]
+      }
+    ],
+    "lead_ids": [
+      "e4720b7a294e495a",
+      "7be5b8b72575a962",
+      "4eed8f9819921bd5"
+    ],
+    "usage": {
+      "input_tokens": 13111,
+      "output_tokens": 656
+    },
+    "summary": "Se encontraron 3 leads cualificados en el sector de agencias de marketing en Lima, Perú. Se descartaron otros resultados que eran directorios o no cumplían con los criterios de cualificación.",
+    "error": null,
+    "created_at": "2026-11-12T22:10:08.916079Z",
+    "finished_at": "2026-11-12T22:10:25.793080Z"
+  },
+  "leads": [
+    {
+      "name": "Creativa 360",
+      "sector": "Marketing",
+      "summary": "Creativa 360: agencia de branding, diseño y marketing de contenidos en Barranco, Lima.",
+      "website": "https://creativa360.example",
+      "location": "Barranco, Lima",
+      "contact": {
+        "emails": [
+          "proyectos@creativa360.example"
+        ],
+        "phones": [
+          "999 555 314"
+        ],
+        "address": "Jr. Unión 215, Barranco",
+        "social_profiles": [
+          "https://www.linkedin.com/company/creativa360-example"
+        ]
+      },
+      "source_urls": [
+        "https://creativa360.example/contacto"
+      ],
+      "fit_score": 5,
+      "fit_reason": "Coincide claramente en sector y ubicación y tiene al menos un dato de contacto.",
+      "lead_id": "e4720b7a294e495a",
+      "run_id": "35886df8c4294a3dbd7ff08fc32c960e",
+      "query_sector": "Agencias de marketing",
+      "query_location": "Lima, Perú",
+      "created_at": "2026-11-12T22:10:21.597670Z"
+    },
+    {
+      "name": "Impulso Digital",
+      "sector": "Marketing",
+      "summary": "Impulso Digital es una agencia de marketing digital en San Isidro, Lima: SEO, campañas en Google Ads y Meta Ads, y gestión de redes sociales para pymes.",
+      "website": "https://impulsodigital-agencia.example",
+      "location": "San Isidro, Lima",
+      "contact": {
+        "emails": [
+          "hola@impulsodigital-agencia.example"
+        ],
+        "phones": [
+          "+51 1 555 3020"
+        ],
+        "address": "Av. Camino Real 456, San Isidro, Lima",
+        "social_profiles": []
+      },
+      "source_urls": [
+        "https://impulsodigital-agencia.example"
+      ],
+      "fit_score": 5,
+      "fit_reason": "Coincide claramente en sector y ubicación y tiene al menos un dato de contacto.",
+      "lead_id": "7be5b8b72575a962",
+      "run_id": "35886df8c4294a3dbd7ff08fc32c960e",
+      "query_sector": "Agencias de marketing",
+      "query_location": "Lima, Perú",
+      "created_at": "2026-11-12T22:10:21.602889Z"
+    },
+    {
+      "name": "GrowthLab Lima",
+      "sector": "Marketing",
+      "summary": "GrowthLab Lima. Agencia de marketing de performance y growth para e-commerce en Miraflores, Lima.",
+      "website": null,
+      "location": "Miraflores, Lima",
+      "contact": {
+        "emails": [],
+        "phones": [
+          "912 555 600"
+        ],
+        "address": null,
+        "social_profiles": [
+          "https://www.instagram.com/growthlab.lima.example"
+        ]
+      },
+      "source_urls": [
+        "https://www.instagram.com/growthlab.lima.example"
+      ],
+      "fit_score": 4,
+      "fit_reason": "Coincide en sector y ubicación; contacto ausente o parcial.",
+      "lead_id": "4eed8f9819921bd5",
+      "run_id": "35886df8c4294a3dbd7ff08fc32c960e",
+      "query_sector": "Agencias de marketing",
+      "query_location": "Lima, Perú",
+      "created_at": "2026-11-12T22:10:21.607848Z"
+    }
+  ]
+}

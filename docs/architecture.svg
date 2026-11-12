@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1630 600" width="1630" height="600" role="img" aria-label="Arquitectura en AWS: API Gateway recibe la petición, una Lambda la encola en SQS, un worker Lambda ejecuta el agente que llama a Bedrock y a la API de búsqueda y guarda los leads en DynamoDB." font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1630" height="600" fill="#FFFFFF"/><defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16202B"/></marker>
+<marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5A6675"/></marker>
+<marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0F6E6E"/></marker>
+</defs>
+<rect x="205" y="24" width="1250" height="452" rx="14" fill="#EEF1F4" stroke="#D8DEE5" stroke-dasharray="6 5"/>
+<text x="221" y="46" font-size="12" font-weight="600" letter-spacing="1.2" fill="#5A6675">AWS CLOUD · us-east-1</text>
+<text x="20" y="494" font-size="12" font-weight="600" letter-spacing="1.2" fill="#5A6675">TRANSVERSAL</text>
+<polyline points="150,228 240,228" fill="none" stroke="#16202B" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="195" y="219" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">1 POST /runs</text>
+<polyline points="390,228 480,228" fill="none" stroke="#16202B" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="435" y="219" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">2 invoca</text>
+<polyline points="630,228 720,228" fill="none" stroke="#16202B" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="675" y="219" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">3 encola</text>
+<polyline points="860,228 950,228" fill="none" stroke="#16202B" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="905" y="219" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">4 consume</text>
+<polyline points="1055,172 1055,91 1260,91" fill="none" stroke="#0F6E6E" stroke-width="1.8" marker-end="url(#aha)" marker-start="url(#aha)"/>
+<text x="1158" y="83" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">5 razona y elige tool</text>
+<polyline points="1160,228 1260,228" fill="none" stroke="#0F6E6E" stroke-width="1.8" marker-end="url(#aha)"/>
+<text x="1210" y="219" font-size="11.5" text-anchor="middle" font-weight="600" fill="#16202B">6 search_web</text>
+<polyline points="1055,284 1055,360" fill="none" stroke="#16202B" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="1063" y="326" font-size="11.5" text-anchor="start" font-weight="600" fill="#16202B">7 save_lead (escritura condicional)</text>
+<polyline points="555,266 555,402 950,402" fill="none" stroke="#5A6675" stroke-width="1.3" marker-end="url(#ahm)"/>
+<text x="842" y="394" font-size="11.5" text-anchor="middle" font-weight="400" fill="#5A6675">crea run · queued</text>
+<polyline points="315,266 315,372" fill="none" stroke="#5A6675" stroke-width="1.3" marker-end="url(#ahm)"/>
+<text x="323" y="323" font-size="11.5" text-anchor="start" font-weight="400" fill="#5A6675">valida JWT</text>
+<polyline points="790,190 790,118" fill="none" stroke="#5A6675" stroke-width="1.3" marker-end="url(#ahm)"/>
+<text x="798" y="158" font-size="11.5" text-anchor="start" font-weight="400" fill="#5A6675">reintentos agotados</text>
+<polyline points="1160,402 1260,402" fill="none" stroke="#5A6675" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#ahm)"/>
+<text x="1210" y="393" font-size="11.5" text-anchor="middle" font-weight="400" fill="#5A6675">Streams</text>
+<polyline points="1430,401 1490,401" fill="none" stroke="#5A6675" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#ahm)"/>
+<text x="1460" y="392" font-size="11.5" text-anchor="middle" font-weight="400" fill="#5A6675">upsert</text>
+<text x="85" y="290" font-size="11" text-anchor="middle" fill="#5A6675">← 202 + run_id</text>
+<text x="85" y="306" font-size="11" text-anchor="middle" fill="#5A6675">GET /runs/{id}</text>
+<rect x="20" y="190" width="130" height="76" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="32" y="205" width="9" height="9" rx="2" fill="#7A8699"/>
+<text x="47" y="214" font-size="13" font-weight="650" fill="#16202B">Clientes</text>
+<text x="32" y="233" font-size="11.5" fill="#5A6675">CRM · n8n · CLI</text>
+<rect x="240" y="190" width="150" height="76" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="252" y="205" width="9" height="9" rx="2" fill="#8C4FFF"/>
+<text x="267" y="214" font-size="13" font-weight="650" fill="#16202B">API Gateway</text>
+<text x="252" y="233" font-size="11.5" fill="#5A6675">HTTP API · throttling</text>
+<rect x="240" y="372" width="150" height="66" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="252" y="387" width="9" height="9" rx="2" fill="#DD344C"/>
+<text x="267" y="396" font-size="13" font-weight="650" fill="#16202B">Cognito</text>
+<text x="252" y="415" font-size="11.5" fill="#5A6675">JWT client_credentials</text>
+<rect x="480" y="190" width="150" height="76" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="492" y="205" width="9" height="9" rx="2" fill="#ED7100"/>
+<text x="507" y="214" font-size="13" font-weight="650" fill="#16202B">Lambda · API</text>
+<text x="492" y="233" font-size="11.5" fill="#5A6675">valida · crea run</text>
+<rect x="720" y="190" width="140" height="76" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="732" y="205" width="9" height="9" rx="2" fill="#E7157B"/>
+<text x="747" y="214" font-size="13" font-weight="650" fill="#16202B">SQS · runs</text>
+<text x="732" y="233" font-size="11.5" fill="#5A6675">cola de trabajos</text>
+<rect x="720" y="56" width="140" height="62" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="732" y="71" width="9" height="9" rx="2" fill="#E7157B"/>
+<text x="747" y="80" font-size="13" font-weight="650" fill="#16202B">SQS · DLQ</text>
+<text x="732" y="99" font-size="11.5" fill="#5A6675">fallos tras 3 intentos</text>
+<rect x="950" y="172" width="210" height="112" rx="9" fill="#FFFFFF" stroke="#0F6E6E" stroke-width="2"/>
+<rect x="962" y="187" width="9" height="9" rx="2" fill="#ED7100"/>
+<text x="977" y="196" font-size="13" font-weight="650" fill="#16202B">Lambda · Agent Worker</text>
+<text x="962" y="215" font-size="11.5" fill="#5A6675">loop ReAct · tool calling</text>
+<rect x="1260" y="56" width="170" height="70" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="1272" y="71" width="9" height="9" rx="2" fill="#01A88D"/>
+<text x="1287" y="80" font-size="13" font-weight="650" fill="#16202B">Amazon Bedrock</text>
+<text x="1272" y="99" font-size="11.5" fill="#5A6675">Claude</text>
+<rect x="1260" y="196" width="170" height="70" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="1272" y="211" width="9" height="9" rx="2" fill="#7A8699"/>
+<text x="1287" y="220" font-size="13" font-weight="650" fill="#16202B">Search API</text>
+<text x="1272" y="239" font-size="11.5" fill="#5A6675">Tavily / Google Places</text>
+<rect x="950" y="360" width="210" height="84" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="962" y="375" width="9" height="9" rx="2" fill="#C925D1"/>
+<text x="977" y="384" font-size="13" font-weight="650" fill="#16202B">DynamoDB</text>
+<text x="962" y="403" font-size="11.5" fill="#5A6675">leads · lead_runs</text>
+<rect x="1260" y="368" width="170" height="66" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="1272" y="383" width="9" height="9" rx="2" fill="#E7157B"/>
+<text x="1287" y="392" font-size="13" font-weight="650" fill="#16202B">EventBridge Pipes</text>
+<text x="1272" y="411" font-size="11.5" fill="#5A6675">Streams → CRM</text>
+<rect x="1490" y="368" width="120" height="66" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="1502" y="383" width="9" height="9" rx="2" fill="#7A8699"/>
+<text x="1517" y="392" font-size="13" font-weight="650" fill="#16202B">CRM</text>
+<text x="1502" y="411" font-size="11.5" fill="#5A6675">HubSpot / SF</text>
+<rect x="962" y="234" width="58" height="22" rx="5" fill="#EEF1F4" stroke="#D8DEE5"/>
+<text x="991" y="249" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" fill="#16202B">search_web</text>
+<rect x="1025" y="234" width="58" height="22" rx="5" fill="#EEF1F4" stroke="#D8DEE5"/>
+<text x="1054" y="249" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" fill="#16202B">save_lead</text>
+<rect x="1088" y="234" width="58" height="22" rx="5" fill="#EEF1F4" stroke="#D8DEE5"/>
+<text x="1117" y="249" font-size="9.5" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" fill="#16202B">finish</text>
+<text x="962" y="274" font-size="10.5" fill="#0F6E6E">+ guardia de grounding</text>
+<rect x="20" y="506" width="330" height="64" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="32" y="521" width="9" height="9" rx="2" fill="#DD344C"/>
+<text x="47" y="530" font-size="13" font-weight="650" fill="#16202B">Secrets Manager</text>
+<text x="32" y="549" font-size="11.5" fill="#5A6675">API keys fuera del código</text>
+<rect x="370" y="506" width="380" height="64" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="382" y="521" width="9" height="9" rx="2" fill="#E7157B"/>
+<text x="397" y="530" font-size="13" font-weight="650" fill="#16202B">CloudWatch + X-Ray</text>
+<text x="382" y="549" font-size="11.5" fill="#5A6675">logs JSON · alarmas DLQ/errores · trazas</text>
+<rect x="770" y="506" width="330" height="64" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="782" y="521" width="9" height="9" rx="2" fill="#DD344C"/>
+<text x="797" y="530" font-size="13" font-weight="650" fill="#16202B">IAM mínimo privilegio</text>
+<text x="782" y="549" font-size="11.5" fill="#5A6675">un rol por función</text>
+<rect x="1120" y="506" width="490" height="64" rx="9" fill="#FFFFFF" stroke="#D8DEE5" stroke-width="1.2"/>
+<rect x="1132" y="521" width="9" height="9" rx="2" fill="#E7157B"/>
+<text x="1147" y="530" font-size="13" font-weight="650" fill="#16202B">EventBridge Scheduler</text>
+<text x="1132" y="549" font-size="11.5" fill="#5A6675">prospección programada por sector (evolución)</text>
+</svg>

@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead Prospecting Agent · Consola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --navy: #0B1B2B; --navy-2: #12263A; --navy-line: #1C2F44; --navy-chip: #2A4058; --on-navy: #B8C6D6; --accent-light: #8FB4FF;
+  --bg: #F3F5F8; --surface: #FFFFFF; --soft: #F7F9FB; --hair: #EEF1F5; --line: #DDE3EA; --field: #C9D2DC;
+  --ink: #0B1B2B; --ink-2: #33414E; --muted: #52606D; --accent: #1D4ED8; --accent-hover: #1E3A8A; --accent-soft: #EAF0FD;
+  --ok: #157347; --ok-bg: #E3F4EA; --warn: #8A5300; --warn-bg: #FDF1DC; --bad: #B42318; --bad-bg: #FDE7E5;
+  --info: #1E3A8A; --info-bg: #EAF0FD;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+a { color: var(--accent); } a:hover { color: var(--accent-hover); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-inline: 32px; }
+@media (max-width: 640px) { .wrap { padding-inline: 16px; } }
+.mono { font-family: var(--mono); }
+.muted { color: var(--muted); }
+h1, h2, h3 { margin: 0; letter-spacing: -0.01em; }
+
+/* header */
+.top { background: var(--navy); border-bottom: 1px solid var(--navy-line); }
+.top .wrap { padding-block: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px; }
+.brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 700; font-size: 16px; }
+.brand:hover { color: #fff; }
+.nav { display: flex; flex-wrap: wrap; gap: 4px; }
+.nav a { color: var(--on-navy); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 6px; }
+.nav a:hover { color: #fff; background: var(--navy-2); }
+.nav a[aria-current="page"] { color: #fff; background: var(--navy-line); }
+.env { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+.env span { font: 12px var(--mono); color: var(--on-navy); border: 1px solid var(--navy-chip); border-radius: 999px; padding: 4px 10px; }
+
+/* hero */
+.hero { background: var(--navy); color: #fff; }
+.hero .wrap { padding-block: 48px 64px; display: flex; flex-wrap: wrap; gap: 40px 56px; align-items: flex-end; }
+.hero-copy { flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.hero .eyebrow { color: var(--accent-light); }
+.hero h1 { font-size: clamp(30px, 4vw, 42px); line-height: 1.12; font-weight: 700; letter-spacing: -0.02em; max-width: 18ch; }
+.hero p { margin: 0; font-size: 17px; color: var(--on-navy); max-width: 62ch; }
+.pipeline { flex: 1 1 460px; min-width: 0; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .pipeline { grid-template-columns: 1fr; } }
+.pipeline li { background: var(--navy-2); border: 1px solid var(--navy-line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.pipeline .k { font: 12px var(--mono); color: var(--accent-light); }
+.pipeline strong { font-size: 15px; font-weight: 600; }
+.pipeline span:last-child { font-size: 13px; color: var(--on-navy); }
+
+/* kpis */
+.kpis { margin: -28px auto 0; }
+.kpis dl { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); box-shadow: 0 1px 2px rgba(11, 27, 43, .06); overflow: hidden; }
+.kpis dl > div { padding: 18px 22px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); margin: 0 -1px -1px 0; display: flex; flex-direction: column; gap: 2px; }
+.kpis dt { font-size: 13px; color: var(--muted); }
+.kpis dd { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.kpis small { font-size: 12.5px; color: var(--muted); }
+
+/* layout */
+.console { padding-block: 32px 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.side { flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+@media (max-width: 760px) { .side { max-width: none; } }
+.content { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.pad { padding: 22px; }
+.card-head { padding: 18px 24px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--hair); }
+.card-head h3, .side h2 { font-size: 17px; font-weight: 600; }
+.card-head span { font-size: 13px; color: var(--muted); }
+
+/* form */
+form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+label { font-size: 13px; font-weight: 500; }
+input { height: 44px; padding: 0 12px; border: 1px solid var(--field); border-radius: 8px; font: inherit; color: var(--ink); background: var(--surface); width: 100%; }
+input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+.hint.err { color: var(--bad); }
+.btn { height: 46px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: 600 15px var(--sans); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; text-decoration: none; }
+.btn:hover { background: var(--accent-hover); color: #fff; }
+.btn:disabled { opacity: .7; cursor: progress; }
+.btn.ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--field); font-weight: 500; height: 44px; }
+.btn.ghost:hover { background: var(--soft); color: var(--ink); }
+
+/* runs list */
+.runs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 460px; overflow: auto; }
+.runs button { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 9px; border: 1px solid #E3E8EE; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.runs button:hover { border-color: var(--field); background: var(--soft); }
+.runs button[aria-current="true"] { border-color: var(--accent); background: #F2F6FE; }
+.runs .row { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.runs strong { font-size: 14px; font-weight: 600; }
+.runs .meta { font-size: 12.5px; color: var(--muted); }
+
+/* badges */
+.badge { font: 500 11.5px var(--mono); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.s-completed, .s-saved { color: var(--ok); background: var(--ok-bg); }
+.s-ok { color: var(--info); background: var(--info-bg); }
+.s-rejected, .s-duplicate, .s-max_steps, .s-queued, .s-running { color: var(--warn); background: var(--warn-bg); }
+.s-failed, .s-error { color: var(--bad); background: var(--bad-bg); }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 6px 12px; }
+.fit { font: 500 12.5px var(--mono); padding: 3px 8px; border-radius: 6px; }
+.fit-hi { color: var(--ok); background: var(--ok-bg); }
+.fit-mid { color: var(--warn); background: var(--warn-bg); }
+.fit-lo { color: var(--bad); background: var(--bad-bg); }
+
+/* run header */
+.run-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-start; justify-content: space-between; }
+.run-head h2 { font-size: 24px; font-weight: 700; }
+.metrics { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: var(--hair); border: 1px solid var(--hair); border-radius: 10px; overflow: hidden; }
+.metrics div { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.metrics dt { font-size: 12.5px; color: var(--muted); }
+.metrics dd { margin: 0; font-size: 20px; font-weight: 600; }
+.note { display: flex; gap: 12px; padding: 14px 16px; background: var(--bg); border-radius: 10px; font-size: 14px; color: var(--ink-2); }
+.note p { margin: 0; }
+.note.err { background: var(--bad-bg); color: var(--bad); }
+.note svg { flex: none; margin-top: 2px; }
+
+/* tables */
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: var(--soft); text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+td { padding: 14px 12px; border-top: 1px solid var(--hair); vertical-align: top; }
+th:first-child, td:first-child { padding-left: 24px; }
+th:last-child, td:last-child { padding-right: 24px; }
+td .name { font-weight: 600; }
+td .sum { font-size: 13px; color: var(--muted); max-width: 36ch; }
+td.src { font: 12px var(--mono); overflow-wrap: anywhere; min-width: 160px; }
+td.contact { font-size: 13px; overflow-wrap: anywhere; }
+.nowrap { white-space: nowrap; }
+.empty { padding: 36px 24px; text-align: center; color: var(--muted); }
+
+/* trace */
+.trace { list-style: none; margin: 0; padding: 0; }
+.trace > li { display: flex; gap: 16px; }
+.rail { display: flex; flex-direction: column; align-items: center; flex: none; width: 28px; }
+.rail .n { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 600 12.5px var(--mono); display: flex; align-items: center; justify-content: center; }
+.rail .line { flex: 1; width: 2px; background: #E3E8EE; min-height: 16px; }
+.trace > li:last-child .line { visibility: hidden; }
+.step { flex: 1; min-width: 0; padding-bottom: 18px; display: flex; flex-direction: column; gap: 8px; }
+.step > strong { font-size: 14px; font-weight: 600; padding-top: 4px; }
+.step .thought { margin: 0; font-size: 13.5px; color: var(--ink-2); font-style: italic; }
+.call { border: 1px solid var(--hair); border-radius: 8px; background: #FBFCFD; padding: 9px 12px; }
+.call .row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.call code { font: 500 13px var(--mono); }
+.call .detail { font-size: 13px; color: var(--ink-2); min-width: 0; overflow-wrap: anywhere; }
+.call details { margin-top: 6px; }
+.call summary { cursor: pointer; font-size: 12.5px; color: var(--muted); }
+.call pre { margin: 6px 0 0; font: 12px/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); max-height: 260px; overflow: auto; }
+
+/* working state */
+.working { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 56px 24px; text-align: center; }
+.spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* pillars + footer */
+.pillars { padding-block: 16px 56px; display: flex; flex-direction: column; gap: 16px; }
+.pillars h2 { font-size: 20px; font-weight: 700; }
+.pillars .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.pillars article { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+.pillars h3 { font-size: 16px; font-weight: 600; }
+.pillars p { margin: 0; font-size: 14px; color: var(--muted); }
+.pillars code { font: 12px var(--mono); color: var(--ink-2); }
+footer { border-top: 1px solid var(--line); background: var(--surface); }
+footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); }
+
+/* leads view */
+.page-head { padding-block: 36px 0; display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
+.page-head h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+.page-head p { margin: 0; color: var(--muted); max-width: 64ch; }
+.page-head .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.stats { margin: 24px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.stats div { padding: 18px 20px; display: flex; flex-direction: column; gap: 2px; }
+.stats dt { font-size: 13px; color: var(--muted); }
+.stats dd { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.toolbar { padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; border-bottom: 1px solid var(--hair); }
+.toolbar .field { flex: 1 1 260px; max-width: 360px; }
+.toolbar .field label { font-size: 12.5px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { height: 44px; padding: 0 14px; border-radius: 999px; font: 500 14px var(--sans); cursor: pointer; border: 1px solid var(--field); background: var(--surface); color: var(--ink); }
+.chips button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
+.table-foot { padding: 12px 20px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--muted); }
+.leads-page { padding-bottom: 56px; display: flex; flex-direction: column; gap: 24px; }
+.leads-page .card { margin-top: 0; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#/">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="6" stroke="#8FB4FF" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="#fff" stroke-width="2"/><path d="M16 16l6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      Lead Prospecting Agent
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#/" data-view="console">Consola</a>
+      <a href="#/leads" data-view="leads">Leads</a>
+      <a href="#arquitectura" data-view="arch">Arquitectura</a>
+      <a href="/docs">API · Swagger</a>
+    </nav>
+    <div class="env" id="env"></div>
+  </div>
+</header>
+
+<!-- ============================== CONSOLE ============================== -->
+<div id="view-console">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Reto técnico · Prospección comercial automatizada</span>
+        <h1>Del sector y la ciudad a leads verificados contra su fuente.</h1>
+        <p>Un agente IA decide qué buscar, qué resultado es un lead real y qué datos extraer. Cada email, teléfono y dirección se comprueba en código contra la página citada antes de guardarse: lo que no aparece en la fuente, no entra a la base de datos.</p>
+      </div>
+      <ol class="pipeline">
+        <li><span class="k">01 · search_web</span><strong>Buscar</strong><span>Consultas por sector, distrito y nicho en fuentes públicas.</span></li>
+        <li><span class="k">02 · LLM</span><strong>Cualificar</strong><span>Descarta directorios, noticias, empleos y otras ciudades.</span></li>
+        <li><span class="k">03 · grounding</span><strong>Verificar</strong><span>Cada dato debe aparecer literalmente en la fuente citada.</span></li>
+        <li><span class="k">04 · save_lead</span><strong>Guardar</strong><span>JSON validado, deduplicado y auditado en la base de datos.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="wrap kpis">
+    <dl id="kpis">
+      <div><dt>Leads verificados</dt><dd>—</dd><small>&nbsp;</small></div>
+      <div><dt>Datos inventados bloqueados</dt><dd>—</dd><small>&nbsp;</small></div>
+      <div><dt>Pasos por ejecución</dt><dd>—</dd><small>&nbsp;</small></div>
+      <div><dt>Tokens por ejecución</dt><dd>—</dd><small>&nbsp;</small></div>
+    </dl>
+  </div>
+
+  <main class="wrap console">
+    <aside class="side">
+      <form class="card pad" id="form">
+        <div>
+          <h2>Nueva prospección</h2>
+          <p class="hint">Parámetros de entrada del agente</p>
+        </div>
+        <div class="field">
+          <label for="sector">Sector empresarial</label>
+          <input id="sector" required minlength="2" maxlength="120" value="Clínicas dentales" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="location">Ubicación</label>
+          <input id="location" required minlength="2" maxlength="120" value="Lima, Perú" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="max">Leads objetivo</label>
+          <input id="max" type="number" min="1" max="20" value="5" required>
+          <span class="hint" id="limits">Máximo 20 por ejecución</span>
+        </div>
+        <button class="btn" id="go" type="submit">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 2.5v11l9-5.5-9-5.5z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <span>Ejecutar agente</span>
+        </button>
+        <p class="hint" id="hint" role="status">Una ejecución tarda entre 10 y 60 s. El resultado queda auditado con su traza.</p>
+      </form>
+
+      <section class="card pad" aria-labelledby="runs-title">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+          <h2 id="runs-title">Ejecuciones</h2>
+          <span class="hint" id="runs-count"></span>
+        </div>
+        <ul class="runs" id="runs"></ul>
+      </section>
+    </aside>
+
+    <section class="content" id="detail" aria-live="polite">
+      <div class="card empty">Ejecuta el agente o elige una ejecución del historial.</div>
+    </section>
+  </main>
+
+  <section class="wrap pillars" id="arquitectura">
+    <h2>Cómo resuelve el reto</h2>
+    <div class="grid">
+      <article class="card"><span class="eyebrow">Diseño agéntico</span><h3>El LLM decide cuándo buscar, guardar y terminar</h3><p>Tool calling nativo en un bucle ReAct con límites de pasos y búsquedas, y guardia de progreso ante bucles.</p><code>agent/runner.py · agent/tools.py</code></article>
+      <article class="card"><span class="eyebrow">Prompt + código</span><h3>Cero datos inventados en la base</h3><p>Prompt de mundo cerrado con contraejemplos; JSON Schema desde Pydantic; verificación literal contra la fuente.</p><code>agent/prompts.py · agent/grounding.py</code></article>
+      <article class="card"><span class="eyebrow">Arquitectura</span><h3>Capas y puertos intercambiables</h3><p>CLI, API y Lambda usan el mismo servicio. Cambiar LLM, buscador o base de datos es una variable de entorno.</p><code>services/ · container.py</code></article>
+      <article class="card"><span class="eyebrow">AWS</span><h3>Serverless asíncrono y escalable</h3><p>API Gateway → Lambda → SQS → worker con Bedrock → DynamoDB, con DLQ, alarmas y plantilla SAM.</p><code>infra/template.yaml</code></article>
+    </div>
+  </section>
+</div>
+
+<!-- ============================== LEADS ============================== -->
+<div id="view-leads" hidden>
+  <main class="wrap leads-page">
+    <div class="page-head">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="eyebrow">Base de datos de leads</span>
+        <h1>Leads verificados</h1>
+        <p>Cada registro proviene de una ejecución auditada del agente. Nombre, contacto y web se comprobaron contra la URL de la fuente antes de guardarse.</p>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="csv" type="button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3l3-3M3 12.5h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Exportar CSV
+        </button>
+        <a class="btn" href="#/">Nueva prospección</a>
+      </div>
+    </div>
+    <dl class="stats" id="stats"></dl>
+    <div class="card">
+      <div class="toolbar">
+        <div class="field">
+          <label for="q">Buscar</label>
+          <input id="q" type="search" placeholder="Empresa, distrito o contacto" autocomplete="off">
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filtrar por sector"></div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th scope="col">Empresa</th><th scope="col">Sector</th><th scope="col">Ubicación</th><th scope="col">Email</th><th scope="col">Teléfono</th><th scope="col">Fit</th><th scope="col">Fuente</th></tr></thead>
+          <tbody id="lead-rows"></tbody>
+        </table>
+      </div>
+      <div class="table-foot" id="lead-foot"></div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Prueba de concepto · Reto técnico Líder Técnico · Ruben Dario Quispe Vilca</span>
+    <span>Python 3.11 · FastAPI · Pydantic · SQLite / DynamoDB · AWS SAM</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtK = (n) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k" : String(n));
+const STATUS_ES = { completed: "Completado", failed: "Fallido", running: "En curso", queued: "En cola", max_steps: "Límite de pasos" };
+const TOOL_LABEL = { search_web: "Búsqueda", save_lead: "Guardado", finish: "Cierre" };
+const ICON_OK = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7.5l2.5 2.5L11 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_INFO = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 8v5M9 5.2v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+let runsCache = [], leadsCache = [], selected = null, poll = null, sectorFilter = "all";
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const d = body.detail;
+    throw new Error(Array.isArray(d) ? d.map((e) => `${e.loc.slice(-1)[0]}: ${e.msg}`).join(" · ") : d || `HTTP ${r.status}`);
+  }
+  return body;
+}
+
+/* ---------------- header + KPIs ---------------- */
+async function loadInfo() {
+  try {
+    const i = await api("/info");
+    $("#env").innerHTML = [`LLM · ${i.llm_model}`, `Búsqueda · ${i.search_provider}`, `DB · ${i.storage_backend === "sqlite" ? "SQLite" : "DynamoDB"}`]
+      .map((t) => `<span>${esc(t)}</span>`).join("");
+    $("#limits").textContent = `Máximo 20 por ejecución · ${i.max_searches} búsquedas · ${i.max_steps} pasos`;
+  } catch { /* header chips are optional */ }
+}
+
+function renderKpis() {
+  const done = runsCache.filter((r) => r.status !== "failed" && r.steps > 0);
+  const rejected = runsCache.reduce((a, r) => a + (r.rejected_saves || 0), 0);
+  const steps = done.map((r) => r.steps);
+  const tokens = done.map((r) => r.usage.input_tokens + r.usage.output_tokens);
+  const range = (xs, f = String) => (!xs.length ? "—" : Math.min(...xs) === Math.max(...xs) ? f(xs[0]) : `${f(Math.min(...xs))}–${f(Math.max(...xs))}`);
+  const items = [
+    ["Leads verificados", leadsCache.length, `en ${done.length} ${done.length === 1 ? "ejecución" : "ejecuciones"}`],
+    ["Datos inventados bloqueados", rejected, "rechazados por grounding"],
+    ["Pasos por ejecución", range(steps), "de un máximo configurable"],
+    ["Tokens por ejecución", range(tokens, fmtK), "entrada + salida"],
+  ];
+  $("#kpis").innerHTML = items.map(([l, v, n]) => `<div><dt>${esc(l)}</dt><dd>${esc(v)}</dd><small>${esc(n)}</small></div>`).join("");
+}
+
+/* ---------------- runs list ---------------- */
+function renderRuns() {
+  $("#runs-count").textContent = runsCache.length ? `${runsCache.length} recientes` : "";
+  $("#runs").innerHTML = runsCache.map((r) => `
+    <li><button type="button" data-id="${esc(r.run_id)}" aria-current="${r.run_id === selected}">
+      <span class="row"><strong>${esc(r.request.sector)}</strong><span class="badge s-${esc(r.status)}">${esc(r.status)}</span></span>
+      <span class="meta">${esc(r.request.location)} · ${new Date(r.created_at).toLocaleString("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })} · ${r.status === "failed" ? "error" : `${r.lead_ids.length} leads`}</span>
+    </button></li>`).join("") || `<li class="hint">Aún no hay ejecuciones.</li>`;
+  document.querySelectorAll("#runs button").forEach((b) => (b.onclick = () => showRun(b.dataset.id)));
+}
+
+async function refresh() {
+  [runsCache, leadsCache] = await Promise.all([api("/runs?limit=30"), api("/leads?limit=200")]);
+  renderRuns(); renderKpis();
+}
+
+/* ---------------- run detail ---------------- */
+function fitClass(f) { return f >= 4 ? "fit-hi" : f === 3 ? "fit-mid" : "fit-lo"; }
+function contactOf(l) {
+  const c = l.contact || {};
+  return { first: [...(c.emails || []), ...(c.phones || [])], social: c.social_profiles || [], address: c.address };
+}
+function host(u) { try { return new URL(u).host.replace(/^www\./, "") + new URL(u).pathname.replace(/\/$/, ""); } catch { return u; } }
+
+function leadsTable(leads, run) {
+  if (!leads.length) {
+    const why = run.duplicates ? ` Encontró ${run.duplicates} que ya existían en la base: la deduplicación evitó repetirlos.` : "";
+    return `<div class="empty">Esta ejecución no guardó leads nuevos.${why}</div>`;
+  }
+  return `<div class="scroll"><table style="min-width:760px">
+    <thead><tr><th scope="col">Empresa</th><th scope="col">Ubicación</th><th scope="col">Contacto</th><th scope="col">Fit</th><th scope="col">Fuente</th></tr></thead>
+    <tbody>${leads.map((l) => {
+      const c = contactOf(l);
+      const lines = c.first.length ? c.first.map(esc).join("<br>") : `<span class="muted">Sin contacto en la fuente</span>`;
+      return `<tr>
+        <td><div class="name">${esc(l.name)}</div><div class="sum">${esc(l.summary)}</div></td>
+        <td class="nowrap">${esc(l.location || "—")}</td>
+        <td class="contact">${lines}${c.address ? `<div class="muted">${esc(c.address)}</div>` : ""}</td>
+        <td><span class="fit ${fitClass(l.fit_score)}" title="${esc(l.fit_reason)}">${l.fit_score}/5</span></td>
+        <td class="src">${(l.source_urls || []).map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join("<br>")}</td>
+      </tr>`;
+    }).join("")}</tbody></table></div>`;
+}
+
+function stepTitle(step) {
+  const counts = {};
+  for (const c of step.calls) { const k = `${c.tool}:${c.status}`; counts[k] = (counts[k] || 0) + 1; }
+  const parts = [];
+  const n = (t, s) => counts[`${t}:${s}`] || 0;
+  if (n("search_web", "ok")) parts.push(`${n("search_web", "ok")} búsqueda${n("search_web", "ok") > 1 ? "s" : ""}`);
+  if (n("save_lead", "saved")) parts.push(`${n("save_lead", "saved")} lead${n("save_lead", "saved") > 1 ? "s" : ""} guardado${n("save_lead", "saved") > 1 ? "s" : ""}`);
+  if (n("save_lead", "rejected")) parts.push(`${n("save_lead", "rejected")} bloqueado${n("save_lead", "rejected") > 1 ? "s" : ""} por la guardia`);
+  if (n("save_lead", "duplicate")) parts.push(`${n("save_lead", "duplicate")} duplicado${n("save_lead", "duplicate") > 1 ? "s" : ""}`);
+  const errors = step.calls.filter((c) => c.status === "error").length;
+  if (errors) parts.push(`${errors} llamada${errors > 1 ? "s" : ""} rechazada${errors > 1 ? "s" : ""} por el sistema`);
+  if (step.calls.some((c) => c.tool === "finish" && c.status === "ok")) parts.push("decide terminar");
+  if (!step.calls.length) return "Responde sin usar herramientas";
+  return parts.length ? parts.join(" · ").replace(/^./, (m) => m.toUpperCase()) : step.calls.map((c) => c.tool).join(", ");
+}
+
+function callDetail(c) {
+  let args = {};
+  try { args = JSON.parse(c.input); } catch { /* truncated input */ }
+  if (c.tool === "search_web") return `«${esc(args.query || "")}» · ${esc(c.status === "ok" ? c.detail.split(":")[0] : c.detail)}`;
+  if (c.tool === "save_lead") {
+    const why = { saved: "", duplicate: " · ya existía en la base" }[c.status] ?? " · " + esc(c.detail);
+    return `<strong>${esc(args.name || "")}</strong>${why}`;
+  }
+  if (c.tool === "finish") return esc(args.summary || c.detail);
+  return esc(c.detail);
+}
+
+function pretty(input) { try { return JSON.stringify(JSON.parse(input), null, 2); } catch { return input; } }
+
+function traceHtml(run) {
+  if (!run.trace || !run.trace.length) return `<div class="empty">Sin pasos registrados.</div>`;
+  return `<ol class="trace">${run.trace.map((s) => `
+    <li><div class="rail"><span class="n">${s.step}</span><span class="line"></span></div>
+      <div class="step"><strong>${esc(stepTitle(s))}</strong>
+        ${s.thought ? `<p class="thought">${esc(s.thought)}</p>` : ""}
+        ${s.calls.map((c) => `<div class="call">
+          <div class="row"><span class="badge s-${esc(c.status)}">${esc(c.status)}</span><code>${esc(c.tool)}</code><span class="detail">${callDetail(c)}</span></div>
+          <details><summary>Ver argumentos${c.tool === "search_web" ? " y resultados" : ""}</summary><pre>${esc(pretty(c.input))}${c.tool === "search_web" ? "\n\n" + esc(c.detail) : ""}</pre></details>
+        </div>`).join("")}
+      </div></li>`).join("")}</ol>`;
+}
+
+function renderRun({ run, leads }) {
+  const u = run.usage || { input_tokens: 0, output_tokens: 0 };
+  const statusCls = run.status === "completed" ? "s-completed" : run.status === "failed" ? "s-failed" : "s-running";
+  const metrics = [
+    ["Pasos", run.steps, ""], ["Búsquedas", run.searches, ""], ["Leads guardados", run.lead_ids.length, "var(--ok)"],
+    ["Rechazos grounding", run.rejected_saves, run.rejected_saves ? "var(--warn)" : ""], ["Duplicados", run.duplicates, ""],
+    ["Tokens", `${fmtK(u.input_tokens)} + ${fmtK(u.output_tokens)}`, ""],
+  ];
+  const errHint = run.error && /API_KEY/.test(run.error) ? " Revisa LLM_PROVIDER y la clave en el archivo .env del proyecto." : "";
+  $("#detail").innerHTML = `
+    <div class="card pad" style="display:flex;flex-direction:column;gap:18px">
+      <div class="run-head">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+          <span class="mono muted" style="font-size:12px;overflow-wrap:anywhere">run ${esc(run.run_id)} · ${new Date(run.created_at).toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" })}</span>
+          <h2>${esc(run.request.sector)} · ${esc(run.request.location)}</h2>
+        </div>
+        <span class="status ${statusCls}">${run.status === "completed" ? ICON_OK : ""}${esc(STATUS_ES[run.status] || run.status)}</span>
+      </div>
+      <dl class="metrics">${metrics.map(([l, v, col]) => `<div><dt>${l}</dt><dd${col ? ` style="color:${col}"` : ""}>${esc(v)}</dd></div>`).join("")}</dl>
+      ${run.error ? `<div class="note err">${ICON_INFO}<p><strong>No se pudo ejecutar.</strong> ${esc(run.error)}.${esc(errHint)}</p></div>` : ""}
+      ${run.summary ? `<div class="note">${ICON_INFO}<p><strong style="color:var(--ink)">Resumen del agente.</strong> ${esc(run.summary)}</p></div>` : ""}
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Leads guardados <span class="muted" style="font-weight:500">· ${leads.length}</span></h3><span>Cada dato verificado contra la URL de la fuente</span></div>
+      ${leadsTable(leads, run)}
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Traza del agente</h3><span>Bucle ReAct · el LLM elige la herramienta, el sistema valida</span></div>
+      <div class="pad">${traceHtml(run)}</div>
+    </div>`;
+}
+
+async function showRun(id) {
+  selected = id;
+  history.replaceState(null, "", `?run=${encodeURIComponent(id)}${location.hash}`);
+  renderRuns();
+  try {
+    const data = await api(`/runs/${encodeURIComponent(id)}`);
+    renderRun(data);
+    clearTimeout(poll);
+    if (["queued", "running"].includes(data.run.status)) poll = setTimeout(() => showRun(id), 3000);
+  } catch (err) {
+    $("#detail").innerHTML = `<div class="card note err">${ICON_INFO}<p>${esc(err.message)}</p></div>`;
+  }
+}
+
+/* ---------------- run form ---------------- */
+$("#form").onsubmit = async (e) => {
+  e.preventDefault();
+  const go = $("#go"), hint = $("#hint");
+  const req = { sector: $("#sector").value.trim(), location: $("#location").value.trim(), max_leads: +$("#max").value };
+  go.disabled = true; go.querySelector("span").textContent = "El agente está trabajando…";
+  hint.className = "hint"; hint.textContent = "Buscando, cualificando y verificando leads…";
+  $("#detail").innerHTML = `<div class="card working"><div class="spinner" aria-hidden="true"></div>
+    <strong>${esc(req.sector)} · ${esc(req.location)}</strong>
+    <span class="muted">El agente busca, descarta lo que no es un lead y verifica cada dato contra su fuente.</span></div>`;
+  try {
+    const { run } = await api("/runs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(req) });
+    await refresh(); await showRun(run.run_id);
+    const done = { completed: "completada", max_steps: "detenida por límite de pasos" }[run.status] || run.status;
+    hint.textContent = run.status === "failed" ? "La ejecución falló: revisa el detalle." : `Ejecución ${done}: ${run.lead_ids.length} leads nuevos, ${run.duplicates} ya existentes.`;
+    hint.className = run.status === "failed" ? "hint err" : "hint";
+  } catch (err) {
+    hint.textContent = err.message; hint.className = "hint err";
+    $("#detail").innerHTML = `<div class="card note err">${ICON_INFO}<p>${esc(err.message)}</p></div>`;
+  } finally {
+    go.disabled = false; go.querySelector("span").textContent = "Ejecutar agente";
+  }
+};
+
+/* ---------------- leads view ---------------- */
+function renderLeadsView() {
+  const sectors = [...new Set(leadsCache.map((l) => l.query_sector))];
+  const withContact = leadsCache.filter((l) => contactOf(l).first.length).length;
+  const high = leadsCache.filter((l) => l.fit_score >= 4).length;
+  $("#stats").innerHTML = [["Leads en la base", leadsCache.length], ["Con email o teléfono verificado", withContact], ["Fit alto (4–5)", high], ["Sectores prospectados", sectors.length]]
+    .map(([l, v]) => `<div class="card"><dt>${l}</dt><dd>${v}</dd></div>`).join("");
+  if (sectorFilter !== "all" && !sectors.includes(sectorFilter)) sectorFilter = "all";
+  $("#chips").innerHTML = [["all", "Todos", leadsCache.length], ...sectors.map((s) => [s, s, leadsCache.filter((l) => l.query_sector === s).length])]
+    .map(([id, label, n]) => `<button type="button" data-sector="${esc(id)}" aria-pressed="${id === sectorFilter}">${esc(label)} · ${n}</button>`).join("");
+  document.querySelectorAll("#chips button").forEach((b) => (b.onclick = () => { sectorFilter = b.dataset.sector; renderLeadsView(); }));
+  const rows = filteredLeads();
+  $("#lead-rows").innerHTML = rows.map((l) => {
+    const c = l.contact || {};
+    const email = (c.emails || []).join(", "), phone = (c.phones || []).join(", ");
+    return `<tr>
+      <td><div class="name">${esc(l.name)}</div><div class="sum">${esc(l.summary)}</div></td>
+      <td style="font-size:13.5px">${esc(l.sector)}</td>
+      <td class="nowrap">${esc(l.location || "—")}</td>
+      <td class="contact${email ? "" : " muted"}">${esc(email || "—")}</td>
+      <td class="contact nowrap${phone ? "" : " muted"}">${esc(phone || "—")}</td>
+      <td><span class="fit ${fitClass(l.fit_score)}" title="${esc(l.fit_reason)}">${l.fit_score}/5</span></td>
+      <td class="src">${(l.source_urls || []).map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join("<br>")}</td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="7" class="empty">${leadsCache.length ? "Ningún lead coincide con el filtro." : "Aún no hay leads. Lanza una prospección desde la consola."}</td></tr>`;
+  $("#lead-foot").textContent = `Mostrando ${rows.length} de ${leadsCache.length} leads`;
+}
+
+function filteredLeads() {
+  const q = $("#q").value.trim().toLowerCase();
+  return leadsCache.filter((l) => {
+    if (sectorFilter !== "all" && l.query_sector !== sectorFilter) return false;
+    if (!q) return true;
+    const c = l.contact || {};
+    return [l.name, l.location, l.sector, l.summary, ...(c.emails || []), ...(c.phones || []), c.address].join(" ").toLowerCase().includes(q);
+  });
+}
+$("#q").oninput = renderLeadsView;
+
+$("#csv").onclick = () => {
+  const cols = ["name", "sector", "location", "emails", "phones", "address", "website", "social_profiles", "fit_score", "fit_reason", "source_urls", "query_sector", "query_location", "run_id", "created_at"];
+  const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = filteredLeads().map((l) => {
+    const c = l.contact || {};
+    const row = { ...l, emails: (c.emails || []).join("; "), phones: (c.phones || []).join("; "), address: c.address, social_profiles: (c.social_profiles || []).join("; "), source_urls: (l.source_urls || []).join("; ") };
+    return cols.map((k) => cell(row[k])).join(",");
+  });
+  const blob = new Blob(["﻿" + [cols.join(","), ...lines].join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `leads_${new Date().toISOString().slice(0, 10)}.csv` });
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* ---------------- routing ---------------- */
+function route() {
+  const leads = location.hash.startsWith("#/leads") || new URLSearchParams(location.search).get("tab") === "leads";
+  $("#view-console").hidden = leads; $("#view-leads").hidden = !leads;
+  document.querySelectorAll(".nav a[data-view]").forEach((a) => a.setAttribute("aria-current", (leads ? a.dataset.view === "leads" : a.dataset.view === "console") ? "page" : "false"));
+  if (leads) renderLeadsView();
+  if (location.hash === "#arquitectura") document.getElementById("arquitectura").scrollIntoView();
+}
+window.addEventListener("hashchange", route);
+
+(async () => {
+  loadInfo();
+  try {
+    await refresh();
+    route();
+    const id = new URLSearchParams(location.search).get("run") || runsCache[0]?.run_id;
+    if (id) await showRun(id);
+  } catch (err) {
+    $("#detail").innerHTML = `<div class="card note err">${ICON_INFO}<p>No se pudo cargar la API: ${esc(err.message)}</p></div>`;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Lead Prospecting Agent — arquitectura serverless de referencia (PoC, no desplegada).
+  API Gateway (HTTP) -> Lambda API -> SQS -> Lambda Worker (agente) -> Bedrock + Search API -> DynamoDB
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, prod]
+  BedrockModelId:
+    Type: String
+    Default: us.anthropic.claude-haiku-4-5-20251001-v1:0
+    Description: Modelo o inference profile de Claude habilitado en Bedrock
+  TavilySecretName:
+    Type: String
+    Default: lead-agent/tavily-api-key
+    Description: Secreto en Secrets Manager con la API key del proveedor de búsqueda
+  WorkerMaxConcurrency:
+    Type: Number
+    Default: 5
+    MinValue: 2
+    Description: Techo de agentes en paralelo (protege cuotas de Bedrock y rate limit del buscador)
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Architectures: [arm64]
+    CodeUri: ../src/
+    Tracing: Active
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        STORAGE_BACKEND: dynamodb
+        DYNAMODB_LEADS_TABLE: !Ref LeadsTable
+        DYNAMODB_RUNS_TABLE: !Ref RunsTable
+        LLM_PROVIDER: bedrock
+        LLM_MODEL: !Ref BedrockModelId
+        SEARCH_PROVIDER: tavily
+        LOG_LEVEL: INFO
+
+Resources:
+  # ------------------------------------------------------------------ Auth
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub lead-agent-${Stage}
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: true
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [client_credentials]
+      AllowedOAuthScopes: [!Sub "${ResourceServer}/runs"]
+
+  ResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      UserPoolId: !Ref UserPool
+      Identifier: lead-agent
+      Name: lead-agent
+      Scopes:
+        - ScopeName: runs
+          ScopeDescription: Crear y consultar ejecuciones
+
+  # ------------------------------------------------------------------ API
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Stage
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 20
+        ThrottlingRateLimit: 10
+      Auth:
+        DefaultAuthorizer: CognitoJwt
+        Authorizers:
+          CognitoJwt:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
+              audience: [!Ref UserPoolClient]
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lead_agent.handlers.aws_lambda.api_handler
+      MemorySize: 512
+      Timeout: 15
+      Environment:
+        Variables:
+          RUN_MODE: async
+          RUNS_QUEUE_URL: !Ref RunsQueue
+      Policies:
+        - DynamoDBCrudPolicy: {TableName: !Ref RunsTable}
+        - DynamoDBReadPolicy: {TableName: !Ref LeadsTable}
+        - SQSSendMessagePolicy: {QueueName: !GetAtt RunsQueue.QueueName}
+      Events:
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /{proxy+}
+            Method: ANY
+
+  # ------------------------------------------------------------------ Agent worker
+  AgentWorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lead_agent.handlers.aws_lambda.worker_handler
+      MemorySize: 1024
+      Timeout: 300
+      Environment:
+        Variables:
+          TAVILY_API_KEY: !Sub "{{resolve:secretsmanager:${TavilySecretName}}}"
+          AGENT_MAX_STEPS: "15"
+          AGENT_MAX_SEARCHES: "5"
+      Policies:
+        - DynamoDBCrudPolicy: {TableName: !Ref LeadsTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref RunsTable}
+        - Statement:
+            - Effect: Allow
+              Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+              Resource:
+                - arn:aws:bedrock:*::foundation-model/anthropic.*
+                - !Sub arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/*
+      Events:
+        Runs:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt RunsQueue.Arn
+            BatchSize: 1
+            FunctionResponseTypes: [ReportBatchItemFailures]
+            ScalingConfig:
+              MaximumConcurrency: !Ref WorkerMaxConcurrency
+
+  RunsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 1800 # 6x el timeout del worker
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt RunsDLQ.Arn
+        maxReceiveCount: 3
+
+  RunsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600 # 14 días
+      SqsManagedSseEnabled: true
+
+  # ------------------------------------------------------------------ Data
+  LeadsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - {AttributeName: lead_id, AttributeType: S}
+        - {AttributeName: query_sector, AttributeType: S}
+        - {AttributeName: created_at, AttributeType: S}
+      KeySchema:
+        - {AttributeName: lead_id, KeyType: HASH}
+      GlobalSecondaryIndexes:
+        - IndexName: sector-index
+          KeySchema:
+            - {AttributeName: query_sector, KeyType: HASH}
+            - {AttributeName: created_at, KeyType: RANGE}
+          Projection: {ProjectionType: ALL}
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE # habilita sincronización a CRM vía EventBridge Pipes
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  RunsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - {AttributeName: run_id, AttributeType: S}
+      KeySchema:
+        - {AttributeName: run_id, KeyType: HASH}
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+
+  # ------------------------------------------------------------------ Observability
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+
+  DLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Hay ejecuciones del agente que fallaron 3 veces
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - {Name: QueueName, Value: !GetAtt RunsDLQ.QueueName}
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: [!Ref AlertsTopic]
+
+  WorkerErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Errores en el worker del agente
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - {Name: FunctionName, Value: !Ref AgentWorkerFunction}
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 3
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions: [!Ref AlertsTopic]
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}
+  RunsQueueUrl:
+    Value: !Ref RunsQueue
+  LeadsTableName:
+    Value: !Ref LeadsTable
