@@ -18,8 +18,7 @@
   --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
 a { color: var(--accent); } a:hover { color: var(--accent-hover); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
@@ -593,9 +592,20 @@ function route() {
   $("#view-console").hidden = leads; $("#view-leads").hidden = !leads;
   document.querySelectorAll(".nav a[data-view]").forEach((a) => a.setAttribute("aria-current", (leads ? a.dataset.view === "leads" : a.dataset.view === "console") ? "page" : "false"));
   if (leads) renderLeadsView();
-  if (location.hash === "#arquitectura") document.getElementById("arquitectura").scrollIntoView();
 }
 window.addEventListener("hashchange", route);
+
+// In-page sections live inside the console view: show it first, then scroll
+// (scrollIntoView forces layout, so the just-unhidden view is measured correctly).
+function scrollToSection(id) {
+  document.getElementById(id)?.scrollIntoView({ block: "start" });
+}
+document.querySelector('.nav a[data-view="arch"]').onclick = (e) => {
+  e.preventDefault();
+  history.pushState(null, "", `${location.search}#arquitectura`);
+  route();
+  scrollToSection("arquitectura");
+};
 
 (async () => {
   loadInfo();
@@ -604,6 +614,7 @@ window.addEventListener("hashchange", route);
     route();
     const id = new URLSearchParams(location.search).get("run") || runsCache[0]?.run_id;
     if (id) await showRun(id);
+    if (location.hash === "#arquitectura") scrollToSection("arquitectura");  // after the run renders
   } catch (err) {
     $("#detail").innerHTML = `<div class="card note err">${ICON_INFO}<p>No se pudo cargar la API: ${esc(err.message)}</p></div>`;
   }
