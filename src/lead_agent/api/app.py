@@ -33,6 +33,12 @@ def create_app() -> FastAPI:
         page = resources.files("lead_agent.api").joinpath("static/index.html")
         return HTMLResponse(page.read_text(encoding="utf-8"))
 
+    @app.get("/architecture.svg", include_in_schema=False)
+    def architecture() -> Response:
+        """AWS production architecture diagram (same file as docs/architecture.svg)."""
+        svg = resources.files("lead_agent.api").joinpath("static/architecture.svg")
+        return Response(svg.read_text(encoding="utf-8"), media_type="image/svg+xml")
+
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}

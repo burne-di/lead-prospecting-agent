@@ -158,6 +158,16 @@ td.contact { font-size: 13px; overflow-wrap: anywhere; }
 .spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* architecture */
+.arch { padding-block: 24px 8px; display: flex; flex-direction: column; gap: 16px; }
+.arch-head { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
+.arch-head h2 { font-size: 24px; font-weight: 700; }
+.arch-head p { margin: 0; color: var(--muted); max-width: 78ch; }
+.arch-figure { margin: 0; overflow: hidden; }
+.arch-figure img { display: block; width: 100%; min-width: 980px; height: auto; }
+.arch-figure figcaption { padding: 12px 20px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--muted); }
+.arch-figure code { font: 12.5px var(--mono); color: var(--ink-2); }
+
 /* pillars + footer */
 .pillars { padding-block: 16px 56px; display: flex; flex-direction: column; gap: 16px; }
 .pillars h2 { font-size: 20px; font-weight: 700; }
@@ -275,7 +285,27 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; gap: 8px 24p
     </section>
   </main>
 
-  <section class="wrap pillars" id="arquitectura">
+  <section class="wrap arch" id="arquitectura" aria-labelledby="arch-title">
+    <div class="arch-head">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="eyebrow">Visión cloud</span>
+        <h2 id="arch-title">Arquitectura de producción en AWS</h2>
+        <p>Serverless asíncrono: la API solo crea el run y lo encola (responde 202 en milisegundos); un worker con concurrencia limitada ejecuta el agente contra Bedrock y guarda en DynamoDB con escritura condicional. Así se protegen las cuotas del LLM y el rate limit del buscador, y los fallos terminan en una DLQ con alarma.</p>
+      </div>
+      <div class="arch-links">
+        <a class="btn ghost" href="/architecture.svg" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9 2h5v5M14 2L7.5 8.5M12 9.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Ver en tamaño completo
+        </a>
+      </div>
+    </div>
+    <figure class="card arch-figure">
+      <div class="scroll"><img src="/architecture.svg" width="1600" height="900" alt="Arquitectura en AWS: clientes llaman a API Gateway con JWT de Cognito; una Lambda API crea el run en DynamoDB y lo encola en SQS (con DLQ); un worker Lambda ejecuta el agente contra Amazon Bedrock y una API de búsqueda externa y guarda los leads en DynamoDB, sincronizados con el CRM vía EventBridge Pipes. Transversal: Secrets Manager, CloudWatch, X-Ray, IAM y EventBridge Scheduler."></div>
+      <figcaption>Definición desplegable en <code>infra/template.yaml</code> (AWS SAM, validada con cfn-lint) · fuente editable con íconos oficiales de AWS en <code>docs/architecture.drawio</code>.</figcaption>
+    </figure>
+  </section>
+
+  <section class="wrap pillars" id="solucion">
     <h2>Cómo resuelve el reto</h2>
     <div class="grid">
       <article class="card"><span class="eyebrow">Diseño agéntico</span><h3>El LLM decide cuándo buscar, guardar y terminar</h3><p>Tool calling nativo en un bucle ReAct con límites de pasos y búsquedas, y guardia de progreso ante bucles.</p><code>agent/runner.py · agent/tools.py</code></article>

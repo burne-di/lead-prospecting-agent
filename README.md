@@ -34,7 +34,7 @@ git clone https://github.com/burne-di/lead-prospecting-agent.git && cd lead-pros
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 
-pytest -q                         # 56 tests: loop del agente, grounding, SQLite, DynamoDB (moto), API, Lambda, CLI
+pytest -q                         # 57 tests: loop del agente, grounding, SQLite, DynamoDB (moto), API, Lambda, CLI
 python scripts/demo_offline.py    # recorre el pipeline completo con un LLM simulado
 ```
 
@@ -205,10 +205,10 @@ src/lead_agent/
 ├── config.py               Settings tipadas desde .env
 └── logging_setup.py        Logs JSON estructurados
 infra/template.yaml         AWS SAM: la arquitectura del diagrama como IaC (validada con cfn-lint)
-docs/architecture.*         Diagrama (SVG y .drawio editable)
+docs/architecture.*         Diagrama AWS: SVG (también en la UI), PNG 2x y .drawio editable
 scripts/                    Demo offline y creación de tablas DynamoDB
 docs/evidence/               Corridas reales con gpt-4o-mini: JSON, logs y capturas de la UI
-tests/                      56 tests, sin red ni claves
+tests/                      57 tests, sin red ni claves
 ```
 
 Las dependencias apuntan hacia adentro: **controladores → servicio → agente → puertos** (`LLMClient`, `SearchProvider`, `LeadRepository`). Cambiar SQLite por DynamoDB, Tavily por Google Places o Claude por GPT es una variable de entorno; el agente no cambia. El mismo `ProspectingService` lo usan la CLI, la API local y las dos Lambdas.
@@ -256,7 +256,7 @@ Defensa en dos capas: **el prompt reduce las alucinaciones y el código bloquea 
 
 ![Arquitectura en AWS](docs/architecture.svg)
 
-Fuente editable en draw.io con íconos oficiales de AWS: [`docs/architecture.drawio`](docs/architecture.drawio). Definición desplegable con AWS SAM: [`infra/template.yaml`](infra/template.yaml).
+Versiones: [SVG](docs/architecture.svg) · [PNG alta resolución](docs/architecture.png) (para presentaciones) · [draw.io editable](docs/architecture.drawio) con las formas oficiales de AWS (`mxgraph.aws4`) y el mismo layout. El diagrama también se ve en la interfaz web (sección **Arquitectura**, o directo en `/architecture.svg`). Definición desplegable con AWS SAM: [`infra/template.yaml`](infra/template.yaml).
 
 1. El cliente (CRM, n8n, un front) llama a **API Gateway (HTTP API)** con un JWT de **Cognito** (`client_credentials`, máquina a máquina). Hay throttling por ruta.
 2. La **Lambda API** valida, crea el run en DynamoDB (`queued`) y lo encola en **SQS**. Responde `202` en milisegundos; el cliente consulta `GET /runs/{id}`.

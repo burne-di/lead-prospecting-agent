@@ -78,6 +78,16 @@ def test_info_exposes_config_but_no_secrets(client, monkeypatch):
     assert "sk-test-secret" not in str(body) and not any("key" in k for k in body)
 
 
+def test_architecture_diagram_is_served_and_matches_docs(client):
+    from pathlib import Path
+
+    r = client.get("/architecture.svg")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("image/svg+xml")
+    assert "Amazon Bedrock" in r.text and "Amazon DynamoDB" in r.text
+    docs = Path(__file__).parents[1] / "docs" / "architecture.svg"
+    assert docs.read_text(encoding="utf-8") == r.text  # one diagram, two places
+
+
 def test_validation_and_404(client):
     assert client.post("/runs", json={"sector": "x"}).status_code == 422
     assert client.get("/runs/missing").status_code == 404
