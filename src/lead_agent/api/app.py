@@ -33,11 +33,25 @@ def create_app() -> FastAPI:
         page = resources.files("lead_agent.api").joinpath("static/index.html")
         return HTMLResponse(page.read_text(encoding="utf-8"))
 
-    @app.get("/architecture.svg", include_in_schema=False)
-    def architecture() -> Response:
-        """AWS production architecture diagram (same file as docs/architecture.svg)."""
-        svg = resources.files("lead_agent.api").joinpath("static/architecture.svg")
-        return Response(svg.read_text(encoding="utf-8"), media_type="image/svg+xml")
+    # AWS production architecture diagram, in the same three formats as docs/.
+    _diagrams = {
+        "svg": ("image/svg+xml", False),
+        "png": ("image/png", True),
+        "drawio": ("application/xml", True),  # draw.io source: plain mxfile XML
+    }
+
+    @app.get("/architecture.{fmt}", include_in_schema=False)
+    def architecture(fmt: str) -> Response:
+        if fmt not in _diagrams:
+            raise HTTPException(status_code=404, detail="formato no disponible")
+        media_type, download = _diagrams[fmt]
+        data = resources.files("lead_agent.api").joinpath(f"static/architecture.{fmt}").read_bytes()
+        headers = (
+            {"Content-Disposition": f'attachment; filename="lead-agent-arquitectura-aws.{fmt}"'}
+            if download
+            else {}
+        )
+        return Response(data, media_type=media_type, headers=headers)
 
     @app.get("/health")
     def health() -> dict[str, str]:

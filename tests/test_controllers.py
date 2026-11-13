@@ -84,8 +84,21 @@ def test_architecture_diagram_is_served_and_matches_docs(client):
     r = client.get("/architecture.svg")
     assert r.status_code == 200 and r.headers["content-type"].startswith("image/svg+xml")
     assert "Amazon Bedrock" in r.text and "Amazon DynamoDB" in r.text
-    docs = Path(__file__).parents[1] / "docs" / "architecture.svg"
-    assert docs.read_text(encoding="utf-8") == r.text  # one diagram, two places
+    docs = Path(__file__).parents[1] / "docs"
+    assert (docs / "architecture.svg").read_bytes() == r.content  # one diagram, two places
+
+    # The UI makes these nodes/edges interactive.
+    for node in ("apigw", "worker", "bedrock", "dynamodb"):
+        assert f'data-node="{node}"' in r.text
+    assert all(f'data-step="{n}"' in r.text for n in range(1, 9))
+
+    for fmt in ("drawio", "png"):
+        r = client.get(f"/architecture.{fmt}")
+        assert r.status_code == 200
+        assert "attachment" in r.headers["content-disposition"]
+        assert (docs / f"architecture.{fmt}").read_bytes() == r.content
+    assert client.get("/architecture.drawio").text.startswith("<mxfile")
+    assert client.get("/architecture.exe").status_code == 404
 
 
 def test_validation_and_404(client):

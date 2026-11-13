@@ -159,9 +159,12 @@ Con la API levantada, abre **http://localhost:8080**. Desde ahí lanzas una pros
 
 - los **leads** guardados con su `fit_score`, contacto y URL de la fuente;
 - la **traza del agente**: cada paso del bucle ReAct, cada tool que el LLM decidió llamar, sus argumentos y lo que respondió el sistema (`ok`, `saved`, `rejected` con el motivo, `duplicate`);
-- el **historial** de ejecuciones y la pestaña con todos los leads de la base de datos.
+- el **historial** de ejecuciones y la pestaña con todos los leads de la base de datos;
+- la pestaña **Arquitectura AWS**: el diagrama interactivo (zoom, arrastrar, clic en cada servicio para ver su rol, por qué se eligió y dónde está en el código, y recorrido del flujo paso a paso del 1 al 8) con descarga del **XML de draw.io**, PNG y SVG.
 
-Enlace directo a una ejecución: `http://localhost:8080/?run=<run_id>`. La documentación interactiva de la API sigue en `/docs`.
+Enlaces directos: una ejecución en `http://localhost:8080/?run=<run_id>`; un paso y un servicio del diagrama en `http://localhost:8080/?step=5&svc=worker#/arquitectura`. Descargas: `/architecture.drawio`, `/architecture.png`, `/architecture.svg`. La documentación interactiva de la API sigue en `/docs`.
+
+![Arquitectura interactiva en la interfaz web](docs/evidence/ui_arquitectura_interactiva.png)
 
 ### 2.6 Evidencia de ejecución real
 
@@ -256,7 +259,7 @@ Defensa en dos capas: **el prompt reduce las alucinaciones y el código bloquea 
 
 ![Arquitectura en AWS](docs/architecture.svg)
 
-Versiones: [SVG](docs/architecture.svg) · [PNG alta resolución](docs/architecture.png) (para presentaciones) · [draw.io editable](docs/architecture.drawio) con las formas oficiales de AWS (`mxgraph.aws4`) y el mismo layout. El diagrama también se ve en la interfaz web (sección **Arquitectura**, o directo en `/architecture.svg`). Definición desplegable con AWS SAM: [`infra/template.yaml`](infra/template.yaml).
+Versiones: [SVG](docs/architecture.svg) · [PNG alta resolución](docs/architecture.png) (para presentaciones) · [draw.io editable](docs/architecture.drawio) con las formas oficiales de AWS (`mxgraph.aws4`) y el mismo layout. En la interfaz web, la pestaña **Arquitectura AWS** muestra este mismo diagrama de forma interactiva y permite descargar el XML de draw.io. Definición desplegable con AWS SAM: [`infra/template.yaml`](infra/template.yaml).
 
 1. El cliente (CRM, n8n, un front) llama a **API Gateway (HTTP API)** con un JWT de **Cognito** (`client_credentials`, máquina a máquina). Hay throttling por ruta.
 2. La **Lambda API** valida, crea el run en DynamoDB (`queued`) y lo encola en **SQS**. Responde `202` en milisegundos; el cliente consulta `GET /runs/{id}`.

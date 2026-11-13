@@ -158,15 +158,52 @@ td.contact { font-size: 13px; overflow-wrap: anywhere; }
 .spinner { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* architecture */
-.arch { padding-block: 24px 8px; display: flex; flex-direction: column; gap: 16px; }
-.arch-head { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; }
-.arch-head h2 { font-size: 24px; font-weight: 700; }
-.arch-head p { margin: 0; color: var(--muted); max-width: 78ch; }
-.arch-figure { margin: 0; overflow: hidden; }
-.arch-figure img { display: block; width: 100%; min-width: 980px; height: auto; }
-.arch-figure figcaption { padding: 12px 20px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--muted); }
-.arch-figure code { font: 12.5px var(--mono); color: var(--ink-2); }
+/* architecture view */
+.arch-page { padding-bottom: 56px; display: flex; flex-direction: column; gap: 20px; }
+.arch-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.arch-main { flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+.arch-side { flex: 1 1 300px; max-width: 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+@media (max-width: 1000px) { .arch-side { max-width: none; } }
+.arch-tools { padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; border-bottom: 1px solid var(--hair); }
+.arch-tools .grp { display: flex; gap: 4px; }
+.icon-btn { width: 36px; height: 36px; border: 1px solid var(--field); border-radius: 8px; background: var(--surface); color: var(--ink); font: 600 16px var(--sans); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.icon-btn:hover { background: var(--soft); }
+.text-btn { height: 36px; padding: 0 12px; border: 1px solid var(--field); border-radius: 8px; background: var(--surface); color: var(--ink); font: 500 13.5px var(--sans); cursor: pointer; }
+.text-btn:hover { background: var(--soft); }
+.arch-tools .hint { margin-left: auto; }
+.stage { position: relative; aspect-ratio: 16 / 9; min-height: 340px; background: #fff; cursor: grab; touch-action: none; user-select: none; }
+.stage.dragging { cursor: grabbing; }
+.stage svg { display: block; width: 100%; height: 100%; }
+.stage [data-node] { cursor: pointer; transition: opacity .2s; }
+.stage [data-step] { transition: opacity .2s, stroke-width .2s; }
+.stage [data-node]:hover > rect:first-child { filter: brightness(1.12); }
+.stage svg.focus [data-node]:not(.on) { opacity: .22; }
+.stage svg.focus [data-step]:not(.on) { opacity: .12; }
+.stage svg [data-step].on { stroke-width: 3.2; }
+.stage svg [data-node].sel > rect:first-child { stroke: #1D4ED8; stroke-width: 4; paint-order: stroke; }
+.steps { padding: 14px; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--hair); align-items: center; }
+.steps button { height: 36px; min-width: 36px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--field); background: var(--surface); font: 600 13px var(--mono); color: var(--ink); cursor: pointer; }
+.steps button.agent { border-color: #F3C08F; color: #9A4A00; }
+.steps button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.steps button.agent[aria-pressed="true"] { background: #ED7100; border-color: #ED7100; }
+.step-text { padding: 0 16px 16px; font-size: 14px; color: var(--ink-2); min-height: 38px; margin: 0; }
+.panel { padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.panel h2 { font-size: 20px; font-weight: 700; }
+.panel .tag { align-self: flex-start; font: 500 12px var(--mono); padding: 3px 9px; border-radius: 999px; color: #fff; }
+.panel p { margin: 0; font-size: 14px; color: var(--ink-2); }
+.panel dl { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.panel dt { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.panel dd { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+.panel code { font: 12.5px var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+.svc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.svc-list button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 10px; font: 500 12.5px var(--sans); color: var(--ink-2); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.svc-list button:hover { border-color: var(--field); background: var(--soft); }
+.svc-list i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.downloads { padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; }
+.downloads h3 { font-size: 15px; font-weight: 600; }
+.downloads a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--ink); font-size: 14px; }
+.downloads a:hover { background: var(--soft); color: var(--ink); }
+.downloads a span { margin-left: auto; font: 12px var(--mono); color: var(--muted); white-space: nowrap; }
 
 /* pillars + footer */
 .pillars { padding-block: 16px 56px; display: flex; flex-direction: column; gap: 16px; }
@@ -210,7 +247,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; gap: 8px 24p
     <nav class="nav" aria-label="Principal">
       <a href="#/" data-view="console">Consola</a>
       <a href="#/leads" data-view="leads">Leads</a>
-      <a href="#arquitectura" data-view="arch">Arquitectura</a>
+      <a href="#/arquitectura" data-view="arch">Arquitectura AWS</a>
       <a href="/docs">API · Swagger</a>
     </nav>
     <div class="env" id="env"></div>
@@ -285,33 +322,13 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; gap: 8px 24p
     </section>
   </main>
 
-  <section class="wrap arch" id="arquitectura" aria-labelledby="arch-title">
-    <div class="arch-head">
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <span class="eyebrow">Visión cloud</span>
-        <h2 id="arch-title">Arquitectura de producción en AWS</h2>
-        <p>Serverless asíncrono: la API solo crea el run y lo encola (responde 202 en milisegundos); un worker con concurrencia limitada ejecuta el agente contra Bedrock y guarda en DynamoDB con escritura condicional. Así se protegen las cuotas del LLM y el rate limit del buscador, y los fallos terminan en una DLQ con alarma.</p>
-      </div>
-      <div class="arch-links">
-        <a class="btn ghost" href="/architecture.svg" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9 2h5v5M14 2L7.5 8.5M12 9.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Ver en tamaño completo
-        </a>
-      </div>
-    </div>
-    <figure class="card arch-figure">
-      <div class="scroll"><img src="/architecture.svg" width="1600" height="900" alt="Arquitectura en AWS: clientes llaman a API Gateway con JWT de Cognito; una Lambda API crea el run en DynamoDB y lo encola en SQS (con DLQ); un worker Lambda ejecuta el agente contra Amazon Bedrock y una API de búsqueda externa y guarda los leads en DynamoDB, sincronizados con el CRM vía EventBridge Pipes. Transversal: Secrets Manager, CloudWatch, X-Ray, IAM y EventBridge Scheduler."></div>
-      <figcaption>Definición desplegable en <code>infra/template.yaml</code> (AWS SAM, validada con cfn-lint) · fuente editable con íconos oficiales de AWS en <code>docs/architecture.drawio</code>.</figcaption>
-    </figure>
-  </section>
-
   <section class="wrap pillars" id="solucion">
     <h2>Cómo resuelve el reto</h2>
     <div class="grid">
       <article class="card"><span class="eyebrow">Diseño agéntico</span><h3>El LLM decide cuándo buscar, guardar y terminar</h3><p>Tool calling nativo en un bucle ReAct con límites de pasos y búsquedas, y guardia de progreso ante bucles.</p><code>agent/runner.py · agent/tools.py</code></article>
       <article class="card"><span class="eyebrow">Prompt + código</span><h3>Cero datos inventados en la base</h3><p>Prompt de mundo cerrado con contraejemplos; JSON Schema desde Pydantic; verificación literal contra la fuente.</p><code>agent/prompts.py · agent/grounding.py</code></article>
       <article class="card"><span class="eyebrow">Arquitectura</span><h3>Capas y puertos intercambiables</h3><p>CLI, API y Lambda usan el mismo servicio. Cambiar LLM, buscador o base de datos es una variable de entorno.</p><code>services/ · container.py</code></article>
-      <article class="card"><span class="eyebrow">AWS</span><h3>Serverless asíncrono y escalable</h3><p>API Gateway → Lambda → SQS → worker con Bedrock → DynamoDB, con DLQ, alarmas y plantilla SAM.</p><code>infra/template.yaml</code></article>
+      <article class="card"><span class="eyebrow">AWS</span><h3>Serverless asíncrono y escalable</h3><p>API Gateway → Lambda → SQS → worker con Bedrock → DynamoDB, con DLQ, alarmas y plantilla SAM.</p><code>infra/template.yaml</code><a href="#/arquitectura" style="font-size:14px;font-weight:600">Explorar la arquitectura →</a></article>
     </div>
   </section>
 </div>
@@ -349,6 +366,55 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; gap: 8px 24p
         </table>
       </div>
       <div class="table-foot" id="lead-foot"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ============================== ARCHITECTURE ============================== -->
+<div id="view-arch" hidden>
+  <main class="wrap arch-page">
+    <div class="page-head">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="eyebrow">Visión cloud · producción</span>
+        <h1>Arquitectura en AWS</h1>
+        <p>Serverless asíncrono: la API crea el run, lo encola y responde 202 en milisegundos; un worker con concurrencia limitada ejecuta el agente contra Bedrock y guarda en DynamoDB con escritura condicional. Haz clic en un servicio para ver su rol, o recorre el flujo paso a paso.</p>
+      </div>
+      <div class="actions">
+        <a class="btn" href="/architecture.drawio" download>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3l3-3M3 12.5h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Descargar XML (draw.io)
+        </a>
+        <a class="btn ghost" href="/architecture.png" download>PNG</a>
+        <a class="btn ghost" href="/architecture.svg" target="_blank" rel="noopener">SVG</a>
+      </div>
+    </div>
+
+    <div class="arch-layout">
+      <section class="card arch-main" aria-label="Diagrama interactivo">
+        <div class="arch-tools">
+          <div class="grp">
+            <button class="icon-btn" type="button" id="zin" aria-label="Acercar">+</button>
+            <button class="icon-btn" type="button" id="zout" aria-label="Alejar">−</button>
+          </div>
+          <button class="text-btn" type="button" id="zfit">Ajustar</button>
+          <button class="text-btn" type="button" id="play">▶ Recorrer flujo</button>
+          <span class="hint">Arrastra para mover · Ctrl + rueda para zoom · clic en un servicio</span>
+        </div>
+        <div class="stage" id="stage"><div class="empty">Cargando diagrama…</div></div>
+        <div class="steps" id="steps" role="group" aria-label="Pasos del flujo"></div>
+        <p class="step-text" id="step-text" aria-live="polite">Elige un paso para resaltar los servicios y conexiones que intervienen.</p>
+      </section>
+
+      <aside class="arch-side">
+        <section class="card panel" id="panel" aria-live="polite"></section>
+        <section class="card downloads">
+          <h3>Entregables del diagrama</h3>
+          <a href="/architecture.drawio" download>Fuente editable draw.io <span>XML</span></a>
+          <a href="/architecture.png" download>Imagen alta resolución <span>.png</span></a>
+          <a href="/architecture.svg" target="_blank" rel="noopener">Vector <span>.svg</span></a>
+          <p class="hint">Infraestructura como código en <code>infra/template.yaml</code> (AWS SAM, validada con cfn-lint).</p>
+        </section>
+      </aside>
     </div>
   </main>
 </div>
@@ -616,35 +682,165 @@ $("#csv").onclick = () => {
   a.click(); URL.revokeObjectURL(a.href);
 };
 
+/* ---------------- architecture (interactive) ---------------- */
+const SVC = {
+  clients: { name: "Clientes", cat: "Externo", color: "#232F3E", role: "CRM, flujos n8n/Make o la CLI lanzan prospecciones con sector y ubicación.", why: "La misma API sirve a personas y a integraciones; el resultado se consulta por run_id.", code: "cli.py · POST /runs" },
+  apigw: { name: "Amazon API Gateway", cat: "Red · HTTP API", color: "#8C4FFF", role: "Punto de entrada HTTPS: autoriza el JWT, aplica throttling y enruta a la Lambda API.", why: "HTTP API es más barata y con menos latencia que REST API; el throttling protege el presupuesto del LLM.", code: "infra/template.yaml · HttpApi" },
+  cognito: { name: "Amazon Cognito", cat: "Seguridad · identidad", color: "#DD344C", role: "Emite JWT (client_credentials) para sistemas que llaman a la API.", why: "Autorización gestionada, sin código propio de auth ni secretos compartidos.", code: "infra/template.yaml · UserPool" },
+  "lambda-api": { name: "AWS Lambda · API", cat: "Cómputo", color: "#ED7100", role: "FastAPI vía Mangum: valida la petición, crea el run en estado queued y lo encola.", why: "Responde 202 en milisegundos; el trabajo largo del agente no bloquea la petición.", code: "handlers/aws_lambda.py · api_handler" },
+  sqs: { name: "Amazon SQS", cat: "Integración · cola", color: "#E7157B", role: "Desacopla la API del agente y limita cuántos agentes corren a la vez (MaximumConcurrency).", why: "Protege las cuotas de Bedrock y el rate limit del buscador; reintentos automáticos.", code: "services/dispatch.py · SQSDispatcher" },
+  dlq: { name: "SQS · Dead-letter queue", cat: "Integración · resiliencia", color: "#E7157B", role: "Recibe los mensajes que fallaron 3 veces, con alarma en CloudWatch.", why: "Ningún run se pierde en silencio; se puede inspeccionar y reprocesar.", code: "infra/template.yaml · RunsDLQ" },
+  worker: { name: "AWS Lambda · Agent Worker", cat: "Cómputo · agente IA", color: "#ED7100", role: "Ejecuta el bucle ReAct: el LLM elige search_web, save_lead o finish; el código valida cada llamada.", why: "Guardia de grounding, límites de pasos y búsquedas y guardia de progreso: el agente no inventa datos ni entra en bucles.", code: "agent/runner.py · agent/tools.py · agent/grounding.py" },
+  bedrock: { name: "Amazon Bedrock", cat: "IA generativa", color: "#01A88D", role: "Modelo Claude con tool calling nativo para razonar y extraer JSON estructurado.", why: "Datos dentro de la cuenta AWS, IAM en lugar de API keys, pago por uso. En local: OpenAI o Anthropic con una variable de entorno.", code: "llm/anthropic_client.py · LLM_PROVIDER=bedrock" },
+  dynamodb: { name: "Amazon DynamoDB", cat: "Base de datos", color: "#C925D1", role: "Tablas leads y lead_runs; la escritura condicional deduplica leads por dominio.", why: "Serverless, sin conexiones que gestionar desde Lambda; Streams habilita la sincronización.", code: "storage/dynamodb.py · LeadRepository" },
+  pipes: { name: "Amazon EventBridge Pipes", cat: "Integración", color: "#E7157B", role: "Lee DynamoDB Streams y envía cada lead nuevo al CRM.", why: "Integración sin código propio de polling; filtrado y transformación declarativos.", code: "Evolución propuesta" },
+  search: { name: "Search API", cat: "Externo", color: "#232F3E", role: "Tavily (o Google Places) devuelve resultados web para cada consulta del agente.", why: "Proveedor intercambiable tras el puerto SearchProvider; hay mock offline para pruebas.", code: "search/tavily.py · search/mock.py" },
+  crm: { name: "CRM", cat: "Externo", color: "#232F3E", role: "HubSpot o Salesforce reciben los leads verificados.", why: "El valor final: leads accionables por el equipo comercial.", code: "Evolución propuesta" },
+  secrets: { name: "AWS Secrets Manager", cat: "Seguridad", color: "#DD344C", role: "Guarda la API key del buscador; nunca en el código ni en variables planas.", why: "Rotación y auditoría; en local el equivalente es el archivo .env (fuera de git).", code: "config.py · .env.example" },
+  cloudwatch: { name: "Amazon CloudWatch", cat: "Observabilidad", color: "#E7157B", role: "Logs JSON por paso y tool call, métricas y alarma de la DLQ.", why: "Cada run es auditable: pasos, rechazos de grounding y tokens.", code: "logging_setup.py · LOG_FORMAT=json" },
+  xray: { name: "AWS X-Ray", cat: "Observabilidad", color: "#E7157B", role: "Trazas distribuidas API → SQS → worker → Bedrock.", why: "Localiza latencias del LLM o del buscador.", code: "infra/template.yaml · Tracing: Active" },
+  iam: { name: "AWS IAM", cat: "Seguridad", color: "#DD344C", role: "Un rol de mínimo privilegio por función.", why: "Solo el worker puede invocar Bedrock; la API se limita a escribir el run y encolarlo.", code: "infra/template.yaml · Policies" },
+  scheduler: { name: "EventBridge Scheduler", cat: "Integración", color: "#E7157B", role: "Lanza prospecciones programadas (p. ej. semanal por sector).", why: "Mantiene la base actualizada sin intervención manual.", code: "Evolución propuesta" },
+};
+const FLOW = [
+  { n: 1, nodes: ["clients", "apigw"], text: "El cliente envía POST /runs con un JWT de Cognito; recibe 202 + run_id y consulta GET /runs/{id}." },
+  { n: 2, nodes: ["apigw", "cognito", "lambda-api"], text: "API Gateway valida el JWT con Cognito, aplica throttling y enruta a la Lambda API." },
+  { n: 3, nodes: ["lambda-api", "sqs", "dynamodb"], text: "La Lambda API valida la entrada, crea el run (queued) en DynamoDB y lo encola en SQS." },
+  { n: 4, nodes: ["sqs", "dlq", "worker"], text: "SQS dispara el worker con concurrencia máxima; tras 3 fallos el mensaje pasa a la DLQ." },
+  { n: 5, nodes: ["worker", "bedrock"], text: "El agente razona con Claude en Bedrock y elige la herramienta (tool calling).", agent: true },
+  { n: 6, nodes: ["worker", "search"], text: "search_web consulta la API de búsqueda externa, con presupuesto de búsquedas por run.", agent: true },
+  { n: 7, nodes: ["worker", "dynamodb"], text: "save_lead pasa la guardia de grounding y escribe en DynamoDB con escritura condicional (dedup).", agent: true },
+  { n: 8, nodes: ["dynamodb", "pipes", "crm"], text: "DynamoDB Streams + EventBridge Pipes sincronizan los leads nuevos con el CRM." },
+];
+const VB0 = { x: 0, y: 0, w: 1600, h: 900 };
+const DEEP = new URLSearchParams(location.search);  // shareable state: ?step=5&svc=worker
+let archSvg = null, vb = { ...VB0 }, activeStep = +DEEP.get("step") || 0, playTimer = null;
+
+function setVB() { archSvg?.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`); }
+function zoom(f, cx = vb.x + vb.w / 2, cy = vb.y + vb.h / 2) {
+  const w = Math.min(Math.max(vb.w * f, 320), 2400);
+  const k = w / vb.w;
+  vb = { x: cx - (cx - vb.x) * k, y: cy - (cy - vb.y) * k, w, h: vb.h * k };
+  setVB();
+}
+
+function renderPanel(id) {
+  const s = SVC[id];
+  if (!s) {
+    $("#panel").innerHTML = `<span class="eyebrow">Servicios</span><h2>Elige un servicio</h2>
+      <p>Haz clic en un ícono del diagrama o en esta lista para ver qué hace, por qué se eligió y dónde está en el código.</p>
+      <ul class="svc-list">${Object.entries(SVC).map(([k, v]) => `<li><button type="button" data-svc="${k}"><i style="background:${v.color}"></i>${esc(v.name.replace(/^(Amazon|AWS) /, ""))}</button></li>`).join("")}</ul>`;
+    document.querySelectorAll("#panel [data-svc]").forEach((b) => (b.onclick = () => selectNode(b.dataset.svc)));
+    return;
+  }
+  $("#panel").innerHTML = `<span class="tag" style="background:${s.color}">${esc(s.cat)}</span><h2>${esc(s.name)}</h2>
+    <dl><div><dt>Rol</dt><dd>${esc(s.role)}</dd></div><div><dt>Por qué</dt><dd>${esc(s.why)}</dd></div>
+    <div><dt>En el repositorio</dt><dd><code>${esc(s.code)}</code></dd></div></dl>
+    <button class="text-btn" type="button" id="panel-back" style="align-self:flex-start">← Todos los servicios</button>`;
+  $("#panel-back").onclick = () => selectNode(null);
+}
+
+function selectNode(id) {
+  archSvg?.querySelectorAll("[data-node]").forEach((g) => g.classList.toggle("sel", g.dataset.node === id));
+  renderPanel(id);
+}
+
+function showStep(n) {
+  activeStep = n;
+  const f = FLOW.find((s) => s.n === n);
+  archSvg?.classList.toggle("focus", !!f);
+  archSvg?.querySelectorAll("[data-node]").forEach((g) => g.classList.toggle("on", !!f && f.nodes.includes(g.dataset.node)));
+  archSvg?.querySelectorAll("[data-step]").forEach((p) => p.classList.toggle("on", !!f && +p.dataset.step === n));
+  document.querySelectorAll("#steps button[data-n]").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.n === n)));
+  $("#step-text").textContent = f ? `${f.n}. ${f.text}` : "Elige un paso para resaltar los servicios y conexiones que intervienen.";
+}
+
+function stopPlay() { clearInterval(playTimer); playTimer = null; $("#play").textContent = "▶ Recorrer flujo"; }
+
+async function initArch() {
+  if (archSvg) return;
+  $("#steps").innerHTML = FLOW.map((s) => `<button type="button" data-n="${s.n}" class="${s.agent ? "agent" : ""}" aria-pressed="false" title="${esc(s.text)}">${s.n}</button>`).join("")
+    + `<button type="button" id="step-all" style="font-family:var(--sans);font-weight:500">Ver todo</button>`;
+  document.querySelectorAll("#steps button[data-n]").forEach((b) => (b.onclick = () => { stopPlay(); showStep(+b.dataset.n); }));
+  $("#step-all").onclick = () => { stopPlay(); showStep(0); };
+  renderPanel(null);
+  try {
+    const txt = await (await fetch("/architecture.svg")).text();
+    $("#stage").innerHTML = txt.slice(txt.indexOf("<svg"));
+  } catch {
+    $("#stage").innerHTML = `<div class="empty">No se pudo cargar el diagrama. <a href="/architecture.svg">Abrir SVG</a></div>`;
+    return;
+  }
+  archSvg = $("#stage svg");
+  archSvg.removeAttribute("width"); archSvg.removeAttribute("height");
+  archSvg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  setVB();
+  archSvg.querySelectorAll("[data-node]").forEach((g) => g.addEventListener("click", () => selectNode(g.dataset.node)));
+
+  // pan (drag) + ctrl/⌘-wheel zoom, in SVG user units
+  const stage = $("#stage");
+  const scale = () => { const r = stage.getBoundingClientRect(); return Math.max(vb.w / r.width, vb.h / r.height); };
+  let drag = null;
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("[data-node]")) return;
+    drag = { x: e.clientX, y: e.clientY, vb: { ...vb }, k: scale() };
+    stage.setPointerCapture(e.pointerId); stage.classList.add("dragging");
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    vb = { ...drag.vb, x: drag.vb.x - (e.clientX - drag.x) * drag.k, y: drag.vb.y - (e.clientY - drag.y) * drag.k };
+    setVB();
+  });
+  const end = () => { drag = null; stage.classList.remove("dragging"); };
+  stage.addEventListener("pointerup", end); stage.addEventListener("pointercancel", end);
+  stage.addEventListener("wheel", (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    const p = archSvg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+    const q = p.matrixTransform(archSvg.getScreenCTM().inverse());
+    zoom(e.deltaY > 0 ? 1.15 : 1 / 1.15, q.x, q.y);
+  }, { passive: false });
+  showStep(activeStep);
+  if (SVC[DEEP.get("svc")]) selectNode(DEEP.get("svc"));
+}
+$("#zin").onclick = () => zoom(1 / 1.25);
+$("#zout").onclick = () => zoom(1.25);
+$("#zfit").onclick = () => { vb = { ...VB0 }; setVB(); };
+$("#play").onclick = () => {
+  if (playTimer) { stopPlay(); return; }
+  $("#play").textContent = "❚❚ Pausar";
+  showStep(activeStep >= 8 ? 1 : activeStep + 1);
+  playTimer = setInterval(() => (activeStep >= 8 ? (stopPlay(), showStep(0)) : showStep(activeStep + 1)), 2600);
+};
+
 /* ---------------- routing ---------------- */
+function currentView() {
+  const h = location.hash, tab = new URLSearchParams(location.search).get("tab");
+  if (h.startsWith("#/leads") || tab === "leads") return "leads";
+  if (h.startsWith("#/arquitectura") || h === "#arquitectura" || tab === "arquitectura") return "arch";
+  return "console";
+}
 function route() {
-  const leads = location.hash.startsWith("#/leads") || new URLSearchParams(location.search).get("tab") === "leads";
-  $("#view-console").hidden = leads; $("#view-leads").hidden = !leads;
-  document.querySelectorAll(".nav a[data-view]").forEach((a) => a.setAttribute("aria-current", (leads ? a.dataset.view === "leads" : a.dataset.view === "console") ? "page" : "false"));
-  if (leads) renderLeadsView();
+  const view = currentView();
+  $("#view-console").hidden = view !== "console";
+  $("#view-leads").hidden = view !== "leads";
+  $("#view-arch").hidden = view !== "arch";
+  document.querySelectorAll(".nav a[data-view]").forEach((a) => a.setAttribute("aria-current", a.dataset.view === view ? "page" : "false"));
+  if (view !== "arch") stopPlay();
+  if (view === "leads") renderLeadsView();
+  if (view === "arch") initArch();
+  window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
 
-// In-page sections live inside the console view: show it first, then scroll
-// (scrollIntoView forces layout, so the just-unhidden view is measured correctly).
-function scrollToSection(id) {
-  document.getElementById(id)?.scrollIntoView({ block: "start" });
-}
-document.querySelector('.nav a[data-view="arch"]').onclick = (e) => {
-  e.preventDefault();
-  history.pushState(null, "", `${location.search}#arquitectura`);
-  route();
-  scrollToSection("arquitectura");
-};
-
 (async () => {
   loadInfo();
+  route();
   try {
     await refresh();
-    route();
+    if (currentView() === "leads") renderLeadsView();
     const id = new URLSearchParams(location.search).get("run") || runsCache[0]?.run_id;
     if (id) await showRun(id);
-    if (location.hash === "#arquitectura") scrollToSection("arquitectura");  // after the run renders
   } catch (err) {
     $("#detail").innerHTML = `<div class="card note err">${ICON_INFO}<p>No se pudo cargar la API: ${esc(err.message)}</p></div>`;
   }
